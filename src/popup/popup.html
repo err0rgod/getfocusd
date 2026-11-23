@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GetFocusd</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="popup-header">
+    <svg class="lock-glyph" viewBox="0 0 24 24" width="16" height="16" fill="none"
+         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true">
+      <rect x="4" y="11" width="16" height="9" rx="2"></rect>
+      <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+    </svg>
+    <h1 class="popup-title">GetFocusd</h1>
+  </header>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Quick-block card (hidden until the current tab's domain is known) -->
+  <section id="quick-block" class="card" hidden>
+    <h2 class="card-heading">Block this site</h2>
+    <p id="current-domain" class="current-domain"></p>
+
+    <div id="duration-chips" class="chips" role="radiogroup" aria-label="Block duration"></div>
+
+    <input id="reason-input" class="text-input" type="text" maxlength="140"
+           placeholder="Reason (optional)" autocomplete="off">
+
+    <p id="block-error" class="error-text" role="alert" hidden></p>
+
+    <button id="block-btn" class="btn btn-primary" type="button">Block now</button>
+  </section>
+
+  <!-- Info card shown when the current tab can't be blocked -->
+  <section id="quick-block-unavailable" class="card" hidden>
+    <p class="muted">This page can't be blocked.</p>
+  </section>
+
+  <!-- Focus session -->
+  <section class="card">
+    <h2 class="card-heading">Focus</h2>
+
+    <!-- Idle: no active session -->
+    <div id="focus-idle" class="focus-idle" hidden>
+      <svg class="timer-glyph" viewBox="0 0 24 24" width="15" height="15" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <line x1="10" y1="2" x2="14" y2="2"></line>
+        <line x1="12" y1="2" x2="12" y2="6"></line>
+        <circle cx="12" cy="14" r="8"></circle>
+        <polyline points="12 10 12 14 15 16"></polyline>
+      </svg>
+      <span class="focus-idle-label">Focus session</span>
+      <button id="focus-start-btn" class="btn btn-primary focus-start-btn" type="button"></button>
+    </div>
+
+    <!-- Active session -->
+    <div id="focus-active" hidden>
+      <div class="focus-status-row">
+        <span id="focus-phase-badge" class="phase-badge"></span>
+        <span id="focus-countdown" class="focus-countdown"></span>
+      </div>
+      <div class="focus-controls-row">
+        <span id="focus-cycle-text" class="muted focus-cycle-text"></span>
+        <button id="focus-stop-btn" class="btn btn-ghost focus-stop-btn" type="button">Stop</button>
+      </div>
+      <p id="focus-stop-hint" class="muted focus-stop-hint" hidden>
+        Work phases are sealed — end early
+        <button id="focus-hint-link" class="inline-link" type="button">from the dashboard</button>.
+      </p>
+    </div>
+  </section>
+
+  <!-- Active blocks -->
+  <section class="card">
+    <h2 class="card-heading">Active blocks</h2>
+    <ul id="block-list" class="block-list"></ul>
+    <p id="block-list-empty" class="muted" hidden>No active blocks.</p>
+    <p id="block-list-more" class="muted more-line" hidden></p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="popup-footer">
+    <label class="switch-row" for="shorts-toggle">
+      <span class="switch-row-label">Block YouTube Shorts</span>
+      <span class="switch">
+        <input id="shorts-toggle" type="checkbox" role="switch" aria-label="Block YouTube Shorts">
+        <span class="switch-track" aria-hidden="true"></span>
+      </span>
+    </label>
+    <button id="dashboard-btn" class="btn btn-ghost" type="button">Open dashboard</button>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

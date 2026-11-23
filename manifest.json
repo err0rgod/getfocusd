@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "GetFocusd - Block Websites & Focus Timer",
+  "short_name": "GetFocusd",
+  "version": "1.1.0",
+  "description": "Sealed no-undo website blocks, Pomodoro focus timer, daily budgets, pause delays & Shorts blocker. Free, private, 100% local.",
+  "homepage_url": "https://getfocusd.tech",
+  "permissions": [
+    "declarativeNetRequestWithHostAccess",
+    "storage",
+    "alarms",
+    "notifications"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "GetFocusd",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    }
+  },
+  "options_page": "src/options/options.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["src/blocked/blocked.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["src/content/shorts.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/content/guard.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  }
+}

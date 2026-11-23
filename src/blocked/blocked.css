@@ -1,0 +1,153 @@
+/* GetFocusd blocked page — full-viewport, calm, centered. Palette per docs/ARCHITECTURE.md §8. */
+
+:root {
+  --bg: #0f172a; --surface: #1e293b; --surface-2: #334155;
+  --primary: #6366f1; --primary-hover: #818cf8;
+  --text: #e2e8f0; --muted: #94a3b8;
+  --danger: #ef4444; --success: #22c55e;
+  --radius: 12px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { min-height: 100%; }
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--primary-hover);
+  outline-offset: 2px;
+}
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 560px;
+  width: 100%;
+  gap: 20px;
+  animation: fade-in 450ms ease both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- lock glyph ---------- */
+.lock-wrap {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: var(--surface);
+}
+.lock-glyph { color: var(--primary); }
+
+/* ---------- headline & reason ---------- */
+.headline {
+  font-size: clamp(26px, 5vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.subline {
+  color: var(--muted);
+  font-size: 16px;
+  max-width: 46ch;
+  overflow-wrap: anywhere;
+}
+.reason {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 16px;
+  max-width: 46ch;
+}
+
+/* ---------- countdown card ---------- */
+.countdown-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 26px 44px;
+  min-width: 280px;
+}
+.countdown-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.countdown {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(34px, 7vw, 52px);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+.countdown.done { color: var(--success); }
+
+/* ---------- quote ---------- */
+.quote {
+  max-width: 48ch;
+  color: var(--muted);
+}
+.quote-text {
+  font-size: 15px;
+  line-height: 1.55;
+}
+.quote-text::before { content: "\201C"; }
+.quote-text::after { content: "\201D"; }
+.quote-author {
+  margin-top: 6px;
+  font-size: 13px;
+}
+.quote-author::before { content: "\2014\00A0"; }
+
+/* ---------- attempts ---------- */
+.attempts {
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+/* ---------- dashboard link ---------- */
+.dashboard-link {
+  margin-top: 6px;
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  color: var(--muted);
+  font-family: var(--font);
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.dashboard-link:hover { color: var(--text); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 480px) {
+  body { padding: 32px 18px; }
+  .countdown-card { padding: 20px 28px; min-width: 0; width: 100%; }
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .wrap { animation: none; }
+  .dashboard-link { transition: none; }
+}

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GetFocusd — Dashboard</title>
+  <link rel="stylesheet" href="./options.css">
+</head>
+<body>
+  <!-- First-load overlay: visible until the first GET_STATE round-trip completes. -->
+  <div id="loading-overlay" role="status" aria-label="Loading">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Loading your dashboard…</p>
+  </div>
+
+  <div class="app">
+    <!-- ===================== Sidebar / tab bar ===================== -->
+    <nav class="sidebar" aria-label="Dashboard sections">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="4" y="10" width="16" height="11" rx="2"></rect>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+        </svg>
+        <span class="brand-name">GetFocusd</span>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Sections">
+        <button class="tab active" id="tab-btn-blocks" role="tab" aria-selected="true" aria-controls="tab-blocks" data-tab="blocks">Blocks</button>
+        <button class="tab" id="tab-btn-focus" role="tab" aria-selected="false" aria-controls="tab-focus" data-tab="focus">Focus</button>
+        <button class="tab" id="tab-btn-limits" role="tab" aria-selected="false" aria-controls="tab-limits" data-tab="limits">Limits</button>
+        <button class="tab" id="tab-btn-schedules" role="tab" aria-selected="false" aria-controls="tab-schedules" data-tab="schedules">Schedules</button>
+        <button class="tab" id="tab-btn-insights" role="tab" aria-selected="false" aria-controls="tab-insights" data-tab="insights">Insights</button>
+        <button class="tab" id="tab-btn-settings" role="tab" aria-selected="false" aria-controls="tab-settings" data-tab="settings">Settings</button>
+      </div>
+    </nav>
+
+    <!-- ===================== Main panels ===================== -->
+    <main class="main">
+
+      <!-- ============ BLOCKS TAB ============ -->
+      <section id="tab-blocks" class="panel active" role="tabpanel" aria-labelledby="tab-btn-blocks">
+        <h1>Blocks</h1>
+
+        <div class="card" id="add-block-card">
+          <h2>Block a website</h2>
+          <form id="add-block-form" novalidate>
+            <div class="field">
+              <label for="block-domain">Website</label>
+              <input type="text" id="block-domain" placeholder="example.com or youtube.com/watch…" autocomplete="off" spellcheck="false">
+              <p class="field-error" id="block-domain-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <span class="field-label" id="duration-label">Duration</span>
+              <div class="chip-row" id="duration-chips" role="group" aria-labelledby="duration-label"></div>
+              <div class="custom-duration" id="custom-duration-row" hidden>
+                <label for="custom-duration">Custom minutes</label>
+                <input type="number" id="custom-duration" min="1" max="10080" step="1" placeholder="e.g. 45">
+              </div>
+              <p class="field-error" id="block-duration-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="block-reason">Reason <span class="muted">(optional)</span></label>
+              <input type="text" id="block-reason" placeholder="Why are you blocking this?" maxlength="200">
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="add-block-submit">Block this site</button>
+          </form>
+        </div>
+
+        <div class="card" id="presets-card">
+          <h2>Quick presets</h2>
+          <p class="muted">One click fills the form above — pick a duration and hit "Block this site".</p>
+          <div id="preset-groups"></div>
+        </div>
+
+        <h2 class="section-heading">Active blocks</h2>
+        <div id="active-blocks-list" class="block-list"></div>
+        <p class="empty-state" id="blocks-empty" hidden>No active blocks — enjoy the open web.</p>
+      </section>
+
+      <!-- ============ FOCUS TAB (NEW) ============ -->
+      <section id="tab-focus" class="panel" role="tabpanel" aria-labelledby="tab-btn-focus" hidden>
+        <h1>Focus</h1>
+
+        <!-- Live session card -->
+        <div class="card" id="focus-session-card">
+          <h2>Focus session</h2>
+          <div id="focus-idle-view">
+            <p class="muted">Start a Pomodoro session to block your Focus List sites during work phases.</p>
+            <button class="btn btn-primary btn-lg" id="focus-start-btn">Start focus session</button>
+          </div>
+          <div id="focus-active-view" hidden>
+            <div class="focus-status-row">
+              <span class="phase-badge" id="focus-phase-badge">Focusing</span>
+              <span class="focus-countdown" id="focus-countdown">25:00</span>
+            </div>
+            <div class="focus-cycle-row">
+              <span id="focus-cycle-label">Cycle 1 of 4</span>
+              <div class="cycle-dots" id="focus-cycle-dots" aria-hidden="true"></div>
+            </div>
+            <button class="btn btn-danger" id="focus-stop-btn">Stop session</button>
+          </div>
+        </div>
+
+        <!-- Configuration card -->
+        <div class="card" id="focus-config-card">
+          <h2>Configuration</h2>
+          <p class="field-note" id="focus-config-notice" hidden>Configuration is locked while a session is active.</p>
+
+          <div class="field">
+            <span class="field-label">Focus List <span class="muted">(sites blocked during work phases)</span></span>
+            <div class="chip-editor" id="focus-list-editor">
+              <div class="chip-container" id="focus-list-chips"></div>
+              <div class="chip-add-row">
+                <input type="text" id="focus-list-input" placeholder="Add a domain, e.g. reddit.com" autocomplete="off" spellcheck="false">
+                <button class="btn btn-ghost btn-sm" id="focus-list-add-btn" type="button">Add</button>
+              </div>
+              <p class="field-error" id="focus-list-error" hidden></p>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="focus-work-min">Work minutes</label>
+              <input type="number" id="focus-work-min" min="5" max="120" step="1">
+            </div>
+            <div class="field">
+              <label for="focus-break-min">Break minutes</label>
+              <input type="number" id="focus-break-min" min="1" max="60" step="1">
+            </div>
+            <div class="field">
+              <label for="focus-cycles">Cycles</label>
+              <input type="number" id="focus-cycles" min="1" max="12" step="1">
+            </div>
+          </div>
+          <p class="field-error" id="focus-config-error" hidden></p>
+
+          <button class="btn btn-primary" id="focus-save-config-btn">Save configuration</button>
+        </div>
+      </section>
+
+      <!-- ============ LIMITS TAB (NEW) ============ -->
+      <section id="tab-limits" class="panel" role="tabpanel" aria-labelledby="tab-btn-limits" hidden>
+        <h1>Limits</h1>
+
+        <!-- Budgets card -->
+        <div class="card" id="budgets-card">
+          <h2>Daily time budgets</h2>
+          <p class="muted">Set a daily allowance for a site. When you hit the limit, the site is blocked until midnight.</p>
+
+          <form id="add-budget-form" novalidate>
+            <div class="field-row">
+              <div class="field" style="flex:2">
+                <label for="budget-domain">Website</label>
+                <input type="text" id="budget-domain" placeholder="e.g. youtube.com" autocomplete="off" spellcheck="false">
+              </div>
+              <div class="field" style="flex:1">
+                <label for="budget-minutes">Daily minutes</label>
+                <input type="number" id="budget-minutes" min="1" max="720" step="1" placeholder="30">
+              </div>
+              <div class="field" style="flex:0;align-self:end">
+                <button type="submit" class="btn btn-primary" id="add-budget-submit">Add</button>
+              </div>
+            </div>
+            <p class="field-error" id="budget-error" hidden></p>
+          </form>
+
+          <div id="budgets-list" class="budget-list"></div>
+          <p class="empty-state" id="budgets-empty" hidden>No budgets yet — add one above to cap your daily time on a site.</p>
+        </div>
+
+        <!-- Delays card -->
+        <div class="card" id="delays-card">
+          <h2>Mindful pause delays</h2>
+          <p class="muted">Add a mindful pause before these sites load — a breathing countdown gives you a moment to reconsider.</p>
+
+          <div class="field">
+            <span class="field-label">Delayed sites</span>
+            <div class="chip-editor" id="delays-list-editor">
+              <div class="chip-container" id="delays-list-chips"></div>
+              <div class="chip-add-row">
+                <input type="text" id="delays-list-input" placeholder="Add a domain, e.g. twitter.com" autocomplete="off" spellcheck="false">
+                <button class="btn btn-ghost btn-sm" id="delays-list-add-btn" type="button">Add</button>
+              </div>
+              <p class="field-error" id="delays-list-error" hidden></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field-label" id="delay-seconds-label">Pause duration</span>
+            <div class="chip-row" id="delay-seconds-chips" role="group" aria-labelledby="delay-seconds-label"></div>
+          </div>
+
+          <button class="btn btn-primary" id="delays-save-btn">Save delays</button>
+        </div>
+      </section>
+
+      <!-- ============ SCHEDULES TAB ============ -->
+      <section id="tab-schedules" class="panel" role="tabpanel" aria-labelledby="tab-btn-schedules" hidden>
+        <h1>Schedules</h1>
+
+        <div class="card" id="add-schedule-card">
+          <h2>New schedule</h2>
+          <form id="add-schedule-form" novalidate>
+            <div class="field">
+              <label for="sched-name">Name</label>
+              <input type="text" id="sched-name" placeholder="e.g. Deep work mornings" maxlength="60">
+              <p class="field-error" id="sched-name-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="sched-domains">Domains <span class="muted">(comma-separated)</span></label>
+              <input type="text" id="sched-domains" placeholder="youtube.com, reddit.com, x.com" autocomplete="off" spellcheck="false">
+              <p class="field-error" id="sched-domains-error" hidden></p>
+              <p class="field-note" id="sched-domains-note" hidden></p>
+            </div>
+
+            <div class="field">
+              <span class="field-label" id="days-label">Days</span>
+              <div class="chip-row" id="day-pills" role="group" aria-labelledby="days-label"></div>
+              <p class="field-error" id="sched-days-error" hidden></p>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="sched-start">Start time</label>
+                <input type="time" id="sched-start" required>
+              </div>
+              <div class="field">
+                <label for="sched-end">End time</label>
+                <input type="time" id="sched-end" required>
+              </div>
+            </div>
+            <p class="field-error" id="sched-time-error" hidden></p>
+
+            <button type="submit" class="btn btn-primary" id="add-schedule-submit">Add schedule</button>
+          </form>
+        </div>
+
+        <h2 class="section-heading">Your schedules</h2>
+        <div id="schedules-list" class="schedule-list"></div>
+        <p class="empty-state" id="schedules-empty" hidden>No schedules yet — create one above to block sites on a routine.</p>
+      </section>
+
+      <!-- ============ INSIGHTS TAB ============ -->
+      <section id="tab-insights" class="panel" role="tabpanel" aria-labelledby="tab-btn-insights" hidden>
+        <h1>Insights</h1>
+
+        <div class="stat-grid" id="stat-cards">
+          <div class="card stat-card">
+            <p class="stat-value" id="stat-attempts-today">0</p>
+            <p class="stat-label">Attempts blocked today</p>
+          </div>
+          <div class="card stat-card">
+            <p class="stat-value" id="stat-completed">0</p>
+            <p class="stat-label">Blocks completed</p>
+          </div>
+          <div class="card stat-card">
+            <p class="stat-value" id="stat-focus-minutes">0m</p>
+            <p class="stat-label">Focus minutes earned</p>
+          </div>
+          <div class="card stat-card">
+            <p class="stat-value" id="stat-streak">0 days</p>
+            <p class="stat-label">Current streak</p>
+          </div>
+          <div class="card stat-card">
+            <p class="stat-value" id="stat-early-unlocks">0</p>
+            <p class="stat-label">Early unlocks</p>
+          </div>
+          <div class="card stat-card">
+            <p class="stat-value" id="stat-focus-today">0 min</p>
+            <p class="stat-label">Focus time today</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Blocked attempts — last 7 days</h2>
+          <div class="bar-chart" id="attempts-chart" role="img" aria-label="Bar chart of blocked attempts over the last 7 days"></div>
+        </div>
+
+        <div class="card">
+          <h2>Time on sites today</h2>
+          <div id="time-sites-list" class="top-domains"></div>
+          <p class="empty-state" id="time-sites-empty" hidden>No time tracked yet today.</p>
+        </div>
+
+        <div class="card">
+          <h2>Top distracting sites</h2>
+          <div id="top-domains-list" class="top-domains"></div>
+          <p class="empty-state" id="top-domains-empty" hidden>No attempts recorded yet — GetFocusd hasn't had to save you from anything.</p>
+        </div>
+
+        <p class="summary-line" id="insights-summary"></p>
+      </section>
+
+      <!-- ============ SETTINGS TAB ============ -->
+      <section id="tab-settings" class="panel" role="tabpanel" aria-labelledby="tab-btn-settings" hidden>
+        <h1>Settings</h1>
+
+        <div class="card" id="unlock-mode-card">
+          <h2>Unlock barrier</h2>
+          <p class="muted">This is what stands between you and ending a block early.</p>
+          <div class="radio-group" role="radiogroup" aria-label="Unlock mode">
+            <label class="radio-option">
+              <input type="radio" name="unlock-mode" value="challenge" id="mode-challenge">
+              <span>
+                <strong>Typing challenge</strong>
+                <span class="muted">Type a motivational quote exactly to unlock.</span>
+              </span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="unlock-mode" value="password" id="mode-password">
+              <span>
+                <strong>Password</strong>
+                <span class="muted">Best: ask a friend to set it, so only they can unlock.</span>
+              </span>
+            </label>
+          </div>
+          <p class="field-note" id="unlock-mode-note" hidden></p>
+        </div>
+
+        <div class="card" id="password-card">
+          <h2>Password</h2>
+          <p class="muted" id="password-status">Checking…</p>
+
+          <form id="set-password-form" novalidate>
+            <div class="field">
+              <label for="pw-new">New password</label>
+              <input type="password" id="pw-new" autocomplete="new-password">
+            </div>
+            <div class="field">
+              <label for="pw-confirm">Confirm new password</label>
+              <input type="password" id="pw-confirm" autocomplete="new-password">
+            </div>
+            <p class="field-error" id="pw-error" hidden></p>
+            <button type="submit" class="btn btn-primary">Set / change password</button>
+          </form>
+
+          <hr class="card-divider">
+          <button class="btn btn-danger" id="clear-password-btn">Remove password</button>
+        </div>
+
+        <div class="card">
+          <h2>Features</h2>
+          <div class="toggle-row">
+            <div class="toggle-text">
+              <strong>YouTube Shorts blocker</strong>
+              <span class="muted">Redirects Shorts to the YouTube home page and hides Shorts shelves.</span>
+            </div>
+            <button class="switch" id="shorts-toggle" role="switch" aria-checked="false" aria-label="YouTube Shorts blocker">
+              <span class="switch-thumb"></span>
+            </button>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-text">
+              <strong>Notifications</strong>
+              <span class="muted">Show a notification when a block completes.</span>
+            </div>
+            <button class="switch" id="notifications-toggle" role="switch" aria-checked="false" aria-label="Notifications">
+              <span class="switch-thumb"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card" id="privacy-card">
+          <h2>Privacy</h2>
+          <p class="muted">100% local — GetFocusd (getfocusd.tech) never sends your data anywhere. Everything stays in your browser.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===================== Unlock modal ===================== -->
+  <div class="modal-overlay" id="unlock-modal" hidden role="dialog" aria-modal="true" aria-labelledby="unlock-modal-title">
+    <div class="modal-card">
+      <h2 id="unlock-modal-title">Unlock</h2>
+      <p class="muted" id="unlock-modal-subtitle">Pass the barrier to continue.</p>
+
+      <div id="unlock-challenge-view" hidden>
+        <blockquote class="challenge-quote" id="unlock-quote-text"></blockquote>
+        <p class="challenge-author muted" id="unlock-quote-author"></p>
+        <div class="field">
+          <label for="unlock-challenge-input">Type the quote exactly</label>
+          <input type="text" id="unlock-challenge-input" autocomplete="off" spellcheck="false" placeholder="Type it here…">
+        </div>
+      </div>
+
+      <div id="unlock-password-view" hidden>
+        <div class="field">
+          <label for="unlock-password-input">Password</label>
+          <input type="password" id="unlock-password-input" autocomplete="current-password" placeholder="Enter password">
+        </div>
+      </div>
+
+      <p class="field-error" id="unlock-error" hidden></p>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="unlock-cancel">Cancel</button>
+        <button class="btn btn-primary" id="unlock-submit">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== Toast ===================== -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="./options.js"></script>
+</body>
+</html>

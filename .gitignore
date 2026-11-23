@@ -1,0 +1,19 @@
+# Dependencies (none today — repo is dependency-free by policy)
+node_modules/
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Logs & temp
+*.log
+*.tmp
+*.mjs.tmp
+
+# Store packaging artifacts
+*.zip
+dist/
+
+# Editor
+.vscode/
+.idea/
