@@ -1,10 +1,10 @@
 /* GetFocusd popup — dark, compact, calm. Palette per docs/ARCHITECTURE.md §8. */
 
 :root {
-  --bg: #0f172a; --surface: #1e293b; --surface-2: #334155;
-  --primary: #6366f1; --primary-hover: #818cf8;
-  --text: #e2e8f0; --muted: #94a3b8;
-  --danger: #ef4444; --success: #22c55e;
+  --bg: #16110d; --surface: #201913; --surface-2: #2e2318;
+  --primary: #e2622b; --primary-hover: #f07a45;
+  --text: #f3ead9; --muted: #b3a58f;
+  --danger: #ef4444; --success: #3fb96a;
   --radius: 12px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
@@ -111,7 +111,7 @@ input:focus-visible,
 .chip.selected {
   background: var(--primary);
   border-color: var(--primary);
-  color: #fff;
+  color: #16110d;
 }
 
 /* ---------- inputs ---------- */
@@ -148,8 +148,13 @@ input:focus-visible,
   transition: background 120ms ease, border-color 120ms ease, opacity 120ms ease;
 }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-primary { background: var(--primary); color: #fff; }
-.btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), #f0a24b);
+  color: #16110d;
+}
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--primary-hover), #f0a24b);
+}
 .btn-ghost {
   background: var(--surface);
   color: var(--text);
@@ -179,12 +184,12 @@ input:focus-visible,
   padding: 3px 10px;
   border-radius: 999px;
   background: var(--primary);
-  color: #fff;
+  color: #16110d;
   font-size: 11.5px;
   font-weight: 650;
   letter-spacing: 0.2px;
 }
-.phase-badge.break { background: var(--success); }
+.phase-badge.break { background: var(--success); color: #16110d; }
 .focus-countdown {
   font-variant-numeric: tabular-nums;
   font-size: 16px;

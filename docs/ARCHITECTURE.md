@@ -232,22 +232,30 @@ On every tick AND at SW start:
   session end, so partial sessions still count) and matching `focusMinutesTotal`.
 - Phase alarm `getfocusd:phase` fires `advancePhase()`; tick §7a-3 is the fallback.
 
-## 8. UI Design Language (unchanged)
+## 8. UI Design Language
 
-Dark-first, calm, minimal. Each page defines these CSS custom properties:
+Warm, dark, calm. Palette is **cream text on near-black with a burnt-orange
+accent**. Each page defines these CSS custom properties (copy this block):
 
 ```css
 :root {
-  --bg: #0f172a; --surface: #1e293b; --surface-2: #334155;
-  --primary: #6366f1; --primary-hover: #818cf8;
-  --text: #e2e8f0; --muted: #94a3b8;
-  --danger: #ef4444; --success: #22c55e;
+  --bg: #16110d;            /* warm near-black */
+  --surface: #201913;       /* dark card */
+  --surface-2: #2e2318;     /* raised control / chip */
+  --primary: #e2622b;       /* burnt orange */
+  --primary-hover: #f07a45;
+  --text: #f3ead9;          /* cream */
+  --muted: #b3a58f;
+  --danger: #ef4444;
+  --success: #3fb96a;
   --radius: 12px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 ```
-Rounded `--radius`, inline SVG only (no emoji icons), focus-visible outlines,
-`chrome.storage.onChanged` live re-render. Brand name shown as **GetFocusd**.
+Rounded `--radius`, inline SVG only (no emoji icons), focus-visible outlines
+(use `--primary`), `chrome.storage.onChanged` live re-render. Brand name shown
+as **GetFocusd**. Accent gradients should run burnt-orange → warm amber
+(`linear-gradient(135deg,#e2622b,#f0a24b)`), never the old indigo/violet.
 
 ## 9. Page Responsibilities
 

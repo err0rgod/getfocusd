@@ -183,9 +183,9 @@
           "align-items:center !important;" +
           "justify-content:center !important;" +
           "flex-direction:column !important;" +
-          "background:rgba(15,23,42,0.97) !important;" +
+          "background:rgba(22,17,13,0.97) !important;" +
           "font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif !important;" +
-          "color:#e2e8f0 !important;" +
+          "color:#f3ead9 !important;" +
           "transition:opacity 0.3s ease !important;"
       );
 
@@ -194,7 +194,7 @@
       circle.setAttribute(
         "style",
         "width:120px;height:120px;border-radius:50%;" +
-          "background:radial-gradient(circle,#6366f1 0%,#1e293b 70%);" +
+          "background:radial-gradient(circle,#e2622b 0%,#2e2318 70%);" +
           "margin-bottom:32px;" +
           "animation:getfocusd-breathe " + seconds + "s ease-in-out infinite;"
       );
@@ -221,7 +221,7 @@
       var countdownEl = document.createElement("div");
       countdownEl.setAttribute(
         "style",
-        "font-size:48px;font-weight:700;color:#6366f1;margin-bottom:24px;min-height:60px;"
+        "font-size:48px;font-weight:700;color:#e2622b;margin-bottom:24px;min-height:60px;"
       );
       overlayEl.appendChild(countdownEl);
 
@@ -231,15 +231,15 @@
       btn.setAttribute(
         "style",
         "padding:12px 32px;font-size:16px;font-weight:600;" +
-          "background:#6366f1;color:#fff;border:none;border-radius:12px;" +
+          "background:#e2622b;color:#16110d;border:none;border-radius:12px;" +
           "cursor:pointer;display:none;outline:none;" +
           "transition:background 0.2s;"
       );
       btn.addEventListener("mouseenter", function () {
-        btn.style.background = "#818cf8";
+        btn.style.background = "#f07a45";
       });
       btn.addEventListener("mouseleave", function () {
-        btn.style.background = "#6366f1";
+        btn.style.background = "#e2622b";
       });
       btn.addEventListener("click", function () {
         removeOverlay();
