@@ -94,7 +94,45 @@
   }
 
   /* ============================================================
-     4. Mobile nav toggle — sync aria-expanded
+     4. Theme toggle — dark / light / auto
+     ============================================================ */
+  var themeToggle = document.getElementById("theme-toggle");
+
+  function getTheme() {
+    var saved = null;
+    try { saved = localStorage.getItem("gf-theme"); } catch (e) { /* private mode */ }
+    if (saved === "dark" || saved === "light") return saved;
+    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    if (themeToggle) {
+      themeToggle.setAttribute("aria-pressed", theme === "dark" ? "false" : "true");
+    }
+  }
+
+  applyTheme(getTheme());
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", function () {
+      var next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      applyTheme(next);
+      try { localStorage.setItem("gf-theme", next); } catch (e) { /* private mode */ }
+    });
+  }
+
+  // React to OS-level changes when no explicit preference is saved
+  try {
+    window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", function (e) {
+      var saved = null;
+      try { saved = localStorage.getItem("gf-theme"); } catch (err) { /* ignore */ }
+      if (!saved) applyTheme(e.matches ? "light" : "dark");
+    });
+  } catch (e) { /* older browsers */ }
+
+  /* ============================================================
+     5. Mobile nav toggle — sync aria-expanded
      ============================================================ */
   var navToggleInput = document.getElementById("nav-toggle");
   var navToggleLabel = document.querySelector(".nav__toggle");

@@ -1,12 +1,45 @@
-/* GetFocusd popup — dark, compact, calm. Palette per docs/ARCHITECTURE.md §8. */
+/* GetFocusd popup — compact, calm. Dual light/dark themes per
+   docs/ARCHITECTURE.md §8: one data-theme attribute flips every token. */
 
-:root {
-  --bg: #16110d; --surface: #201913; --surface-2: #2e2318;
-  --primary: #e2622b; --primary-hover: #f07a45;
-  --text: #f3ead9; --muted: #b3a58f;
-  --danger: #ef4444; --success: #3fb96a;
+:root,
+[data-theme="dark"] {
+  --bg: #16110d;            /* near-black */
+  --surface: #201913;
+  --surface-2: #2e2318;
+  --text: #f3ead9;          /* cream */
+  --muted: #b3a58f;
+  --border: rgba(243, 234, 217, 0.10);
+  --primary: #e2622b;       /* burnt orange accent */
+  --primary-hover: #f07a45;
+  --on-primary: #16110d;    /* text on the orange accent */
+  --danger: #ef4444;
+  --success: #3fb96a;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --accent-gradient: linear-gradient(135deg, #e2622b, #f0a24b);
+  --accent-hover-gradient: linear-gradient(135deg, #f07a45, #f0a24b);
   --radius: 12px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #f3ead9;            /* cream */
+  --surface: #faf4e8;
+  --surface-2: #e9dfc9;
+  --text: #16110d;          /* near-black */
+  --muted: #6b6152;
+  --border: rgba(22, 17, 13, 0.12);
+  --primary: #e2622b;
+  --primary-hover: #c9501d;
+  --on-primary: #16110d;
+  --danger: #d33a3a;
+  --success: #1e9e50;
+  --shadow: rgba(22, 17, 13, 0.15);
+  --accent-gradient: linear-gradient(135deg, #e2622b, #f0a24b);
+  --accent-hover-gradient: linear-gradient(135deg, #c9501d, #e2832f);
+  --radius: 12px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -98,7 +131,7 @@ input:focus-visible,
 }
 .chip {
   padding: 5px 10px;
-  border: 1px solid var(--surface-2);
+  border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--surface-2);
   color: var(--text);
@@ -111,7 +144,7 @@ input:focus-visible,
 .chip.selected {
   background: var(--primary);
   border-color: var(--primary);
-  color: #16110d;
+  color: var(--on-primary);
 }
 
 /* ---------- inputs ---------- */
@@ -119,7 +152,7 @@ input:focus-visible,
   width: 100%;
   padding: 8px 10px;
   margin-bottom: 10px;
-  border: 1px solid var(--surface-2);
+  border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--bg);
   color: var(--text);
@@ -149,16 +182,16 @@ input:focus-visible,
 }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), #f0a24b);
-  color: #16110d;
+  background: var(--accent-gradient);
+  color: var(--on-primary);
 }
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--primary-hover), #f0a24b);
+  background: var(--accent-hover-gradient);
 }
 .btn-ghost {
   background: var(--surface);
   color: var(--text);
-  border: 1px solid var(--surface-2);
+  border: 1px solid var(--border);
 }
 .btn-ghost:hover:not(:disabled) { border-color: var(--primary-hover); }
 
@@ -184,12 +217,12 @@ input:focus-visible,
   padding: 3px 10px;
   border-radius: 999px;
   background: var(--primary);
-  color: #16110d;
+  color: var(--on-primary);
   font-size: 11.5px;
   font-weight: 650;
   letter-spacing: 0.2px;
 }
-.phase-badge.break { background: var(--success); color: #16110d; }
+.phase-badge.break { background: var(--success); color: var(--on-primary); }
 .focus-countdown {
   font-variant-numeric: tabular-nums;
   font-size: 16px;
@@ -227,7 +260,7 @@ input:focus-visible,
   gap: 10px;
   padding: 6px 0;
 }
-.block-item + .block-item { border-top: 1px solid var(--surface-2); }
+.block-item + .block-item { border-top: 1px solid var(--border); }
 .block-domain {
   font-weight: 600;
   overflow: hidden;
@@ -290,7 +323,7 @@ input:focus-visible,
   transition: transform 150ms ease;
 }
 .switch input:checked + .switch-track { background: var(--primary); }
-.switch input:checked + .switch-track::after { transform: translateX(14px); background: #fff; }
+.switch input:checked + .switch-track::after { transform: translateX(14px); background: var(--on-primary); }
 .switch input:focus-visible + .switch-track {
   outline: 2px solid var(--primary-hover);
   outline-offset: 2px;

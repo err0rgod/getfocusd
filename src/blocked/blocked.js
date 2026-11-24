@@ -42,6 +42,33 @@ let reloadTimer = 0;
 let finished = false;
 
 /**
+ * Resolve "auto" via prefers-color-scheme and set data-theme on <html>.
+ * @param {string} [theme] "dark" | "light" | "auto" (default "dark")
+ */
+function applyTheme(theme) {
+  const t = theme === "light" || theme === "auto" ? theme : "dark";
+  const resolved =
+    t === "auto"
+      ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+      : t;
+  document.documentElement.dataset.theme = resolved;
+}
+
+/** Read the stored theme and apply it (also re-apply on live changes). */
+function initTheme() {
+  try {
+    chrome.storage.local.get("settings").then(({ settings }) => {
+      applyTheme(settings?.theme);
+    });
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area !== "local") return;
+      const themeChange = changes.settings?.newValue?.theme;
+      if (typeof themeChange === "string") applyTheme(themeChange);
+    });
+  } catch { /* default dark */ }
+}
+
+/**
  * Read and sanitize the redirect query params. Anything missing or garbage
  * falls back to null so the page can degrade to a generic layout.
  * @returns {{type: "block"|"schedule"|"focus"|"budget"|null, domain: string|null,
@@ -198,6 +225,7 @@ async function recordAttempt() {
 
 /** Wire the dashboard link, paint content, start the countdown. */
 function init() {
+  initTheme();
   renderStaticContent();
   renderQuote();
 

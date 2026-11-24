@@ -234,28 +234,58 @@ On every tick AND at SW start:
 
 ## 8. UI Design Language
 
-Warm, dark, calm. Palette is **cream text on near-black with a burnt-orange
-accent**. Each page defines these CSS custom properties (copy this block):
+Two main colors — **black and cream** — that invert between light and dark
+mode; **burnt orange is the only accent** and is used to highlight (buttons,
+chips, focus rings, countdowns). All colors MUST be CSS variables so a single
+`data-theme` attribute on `<html>` flips the whole page. Default theme is
+`"dark"`; the Settings tab exposes Light / Dark / Auto (Auto follows
+`prefers-color-scheme`).
+
+Each page defines these tokens (copy this block):
 
 ```css
-:root {
-  --bg: #16110d;            /* warm near-black */
-  --surface: #201913;       /* dark card */
-  --surface-2: #2e2318;     /* raised control / chip */
-  --primary: #e2622b;       /* burnt orange */
-  --primary-hover: #f07a45;
+:root,
+[data-theme="dark"] {
+  --bg: #16110d;            /* near-black */
+  --surface: #201913;
+  --surface-2: #2e2318;
   --text: #f3ead9;          /* cream */
   --muted: #b3a58f;
+  --border: rgba(243, 234, 217, 0.10);
+  --primary: #e2622b;       /* burnt orange accent */
+  --primary-hover: #f07a45;
+  --on-primary: #16110d;    /* text on the orange accent */
   --danger: #ef4444;
   --success: #3fb96a;
   --radius: 12px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
+[data-theme="light"] {
+  --bg: #f3ead9;            /* cream */
+  --surface: #faf4e8;
+  --surface-2: #e9dfc9;
+  --text: #16110d;          /* near-black */
+  --muted: #6b6152;
+  --border: rgba(22, 17, 13, 0.12);
+  --primary: #e2622b;
+  --primary-hover: #c9501d;
+  --on-primary: #16110d;
+  --danger: #d33a3a;
+  --success: #1e9e50;
+  --radius: 12px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
 ```
-Rounded `--radius`, inline SVG only (no emoji icons), focus-visible outlines
-(use `--primary`), `chrome.storage.onChanged` live re-render. Brand name shown
-as **GetFocusd**. Accent gradients should run burnt-orange → warm amber
-(`linear-gradient(135deg,#e2622b,#f0a24b)`), never the old indigo/violet.
+
+Rules:
+- No component may hard-code a color; everything flows through the tokens.
+- Accent gradients run burnt-orange → warm amber (`linear-gradient(135deg,#e2622b,#f0a24b)`).
+- Focus-visible outlines use `--primary`. Inline SVG icons use `currentColor`.
+- `settings.theme` is `"dark" | "light" | "auto"`. On page load, set
+  `document.documentElement.dataset.theme` (resolve `"auto"` via
+  `matchMedia("(prefers-color-scheme: light)")`). The Settings tab has a
+  three-way theme selector that saves via `UPDATE_SETTINGS` and applies live.
+- `chrome.storage.onChanged` live re-render; brand name shown as **GetFocusd**.
 
 ## 9. Page Responsibilities
 

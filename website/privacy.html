@@ -6,10 +6,12 @@
   <title>Privacy Policy — GetFocusd</title>
   <meta name="description" content="GetFocusd privacy policy. No accounts, no analytics, no servers. All data is stored locally in your browser.">
   <link rel="canonical" href="https://getfocusd.tech/privacy">
-  <meta name="theme-color" content="#16110d">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3ead9">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#16110d">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon32.png">
   <link rel="icon" type="image/png" sizes="128x128" href="assets/icon128.png">
   <link rel="stylesheet" href="styles.css">
+  <script src="main.js" defer></script>
 </head>
 <body>
 
@@ -29,6 +31,10 @@
         <a href="https://github.com/err0rgod/getfocusd" class="nav__link" target="_blank" rel="noopener">GitHub</a>
         <!-- TODO: replace with real CWS listing URL after publish -->
         <a href="https://chromewebstore.google.com/detail/getfocusd" class="btn btn--primary nav__cta" target="_blank" rel="noopener">Add to Chrome</a>
+        <button class="nav__theme-toggle" id="theme-toggle" aria-label="Toggle theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
       </nav>
     </div>
   </header>

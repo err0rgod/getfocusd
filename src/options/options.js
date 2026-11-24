@@ -125,6 +125,23 @@ let state = null;
 /** Selected duration (minutes) in the add-block form. */
 let selectedDurationMin = DURATION_PRESETS[1]; // sensible default: 30
 
+/* ------------------------------------------------------------------ *
+ *  Theme
+ * ------------------------------------------------------------------ */
+
+/**
+ * Resolve "auto" via prefers-color-scheme and set data-theme on <html>.
+ * @param {string} [theme] "dark" | "light" | "auto" (default "dark")
+ */
+function applyTheme(theme) {
+  const t = theme === "light" || theme === "auto" ? theme : "dark";
+  const resolved =
+    t === "auto"
+      ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+      : t;
+  document.documentElement.dataset.theme = resolved;
+}
+
 /** Whether the "Custom…" duration row is visible. */
 let customDurationOpen = false;
 
@@ -1427,6 +1444,14 @@ function renderSettings() {
   // Feature toggles.
   $("shorts-toggle").setAttribute("aria-checked", String(settings.shortsBlocker === true));
   $("notifications-toggle").setAttribute("aria-checked", String(settings.notifications !== false));
+
+  // Theme selector — persisted value drives the chip state.
+  const theme = settings.theme ?? "dark";
+  for (const chip of document.querySelectorAll("#theme-chips .chip")) {
+    const active = chip.dataset.themeValue === theme;
+    chip.classList.toggle("selected", active);
+    chip.setAttribute("aria-checked", String(active));
+  }
 }
 
 /** Wire all settings-tab controls. */
@@ -1530,6 +1555,22 @@ function initSettings() {
       showToast(errMsg(err), "error");
     }
   });
+
+  // --- theme selector ---
+  for (const chip of document.querySelectorAll("#theme-chips .chip")) {
+    chip.addEventListener("click", async () => {
+      const theme = chip.dataset.themeValue;
+      if (!theme || theme === state?.settings?.theme) return;
+      try {
+        await send(MSG.UPDATE_SETTINGS, { patch: { theme } });
+        applyTheme(theme);
+        showToast(`Theme set to ${theme}.`, "success");
+      } catch (err) {
+        showToast(errMsg(err), "error");
+        renderSettings();
+      }
+    });
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -1541,6 +1582,7 @@ async function refreshState() {
   try {
     const data = await send(MSG.GET_STATE);
     state = data;
+    applyTheme(data.settings?.theme);
     renderBlocks();
     renderFocusSession();
     renderFocusConfig();
@@ -1561,6 +1603,9 @@ async function refreshState() {
 function initStorageListener() {
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== "local") return;
+    // Flip live when the theme is edited elsewhere (popup, another tab).
+    const themeChange = changes.settings?.newValue?.theme;
+    if (typeof themeChange === "string") applyTheme(themeChange);
     // Any of our keys changing means the snapshot is stale.
     refreshState();
   });

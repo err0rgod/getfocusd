@@ -68,6 +68,19 @@ let toastTimer = 0;
 let tickTimer = 0;
 
 /**
+ * Resolve "auto" via prefers-color-scheme and set data-theme on <html>.
+ * @param {string} [theme] "dark" | "light" | "auto" (default "dark")
+ */
+function applyTheme(theme) {
+  const t = theme === "light" || theme === "auto" ? theme : "dark";
+  const resolved =
+    t === "auto"
+      ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+      : t;
+  document.documentElement.dataset.theme = resolved;
+}
+
+/**
  * Send a message to the service worker and unwrap the {ok, ...} envelope.
  * @param {string} type one of constants.MSG
  * @param {object} [payload] extra message fields
@@ -283,6 +296,7 @@ async function refreshState() {
     state.blocks = Object.values(data.blocks ?? {});
     if (data.focus) state.focus = data.focus;
     state.shortsBlocker = Boolean(data.settings?.shortsBlocker);
+    applyTheme(data.settings?.theme);
     if (!suppressToggleSync) {
       els.shortsToggle.checked = state.shortsBlocker;
     }
@@ -350,6 +364,9 @@ async function onShortsToggle() {
  */
 function onStorageChanged(changes, area) {
   if (area !== "local") return;
+  // Flip live when the theme is edited elsewhere (options, another view).
+  const themeChange = changes.settings?.newValue?.theme;
+  if (typeof themeChange === "string") applyTheme(themeChange);
   const watched = [STORAGE_KEYS.BLOCKS, STORAGE_KEYS.SETTINGS, STORAGE_KEYS.FOCUS];
   if (watched.some((k) => k in changes)) {
     void refreshState();
@@ -358,6 +375,12 @@ function onStorageChanged(changes, area) {
 
 /** Wire events, detect the current tab, and load initial state. */
 async function init() {
+  // Apply the saved theme before first paint to avoid a theme flash.
+  try {
+    const { settings } = await chrome.storage.local.get("settings");
+    applyTheme(settings?.theme);
+  } catch { /* default dark */ }
+
   renderChips();
   state.domain = await detectCurrentDomain();
   renderQuickBlockVisibility();

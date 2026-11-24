@@ -298,6 +298,16 @@
       <section id="tab-settings" class="panel" role="tabpanel" aria-labelledby="tab-btn-settings" hidden>
         <h1>Settings</h1>
 
+        <div class="card" id="theme-card">
+          <h2>Theme</h2>
+          <p class="muted">Pick a look — Auto follows your system's light/dark preference.</p>
+          <div class="chip-row" id="theme-chips" role="radiogroup" aria-label="Theme">
+            <button class="chip" id="theme-light" type="button" role="radio" aria-checked="false" data-theme-value="light">Light</button>
+            <button class="chip" id="theme-dark" type="button" role="radio" aria-checked="true" data-theme-value="dark">Dark</button>
+            <button class="chip" id="theme-auto" type="button" role="radio" aria-checked="false" data-theme-value="auto">Auto</button>
+          </div>
+        </div>
+
         <div class="card" id="unlock-mode-card">
           <h2>Unlock barrier</h2>
           <p class="muted">This is what stands between you and ending a block early.</p>

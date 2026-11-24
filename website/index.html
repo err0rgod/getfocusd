@@ -11,7 +11,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://getfocusd.tech/">
   <link rel="canonical" href="https://getfocusd.tech/">
-  <meta name="theme-color" content="#16110d">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3ead9">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#16110d">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon32.png">
   <link rel="icon" type="image/png" sizes="128x128" href="assets/icon128.png">
   <link rel="apple-touch-icon" href="assets/icon128.png">
@@ -47,6 +48,10 @@
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
           Add to Chrome
         </a>
+        <button class="nav__theme-toggle" id="theme-toggle" aria-label="Toggle theme" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
       </nav>
     </div>
   </header>

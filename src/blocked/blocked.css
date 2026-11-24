@@ -1,12 +1,41 @@
-/* GetFocusd blocked page — full-viewport, calm, centered. Palette per docs/ARCHITECTURE.md §8. */
+/* GetFocusd blocked page — full-viewport, calm, centered. Dual light/dark
+   themes per docs/ARCHITECTURE.md §8: one data-theme attribute flips all tokens. */
 
-:root {
-  --bg: #16110d; --surface: #201913; --surface-2: #2e2318;
-  --primary: #e2622b; --primary-hover: #f07a45;
-  --text: #f3ead9; --muted: #b3a58f;
-  --danger: #ef4444; --success: #3fb96a;
+:root,
+[data-theme="dark"] {
+  --bg: #16110d;            /* near-black */
+  --surface: #201913;
+  --surface-2: #2e2318;
+  --text: #f3ead9;          /* cream */
+  --muted: #b3a58f;
+  --border: rgba(243, 234, 217, 0.10);
+  --primary: #e2622b;       /* burnt orange accent */
+  --primary-hover: #f07a45;
+  --on-primary: #16110d;    /* text on the orange accent */
+  --danger: #ef4444;
+  --success: #3fb96a;
+  --shadow: rgba(0, 0, 0, 0.5);
   --radius: 12px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #f3ead9;            /* cream */
+  --surface: #faf4e8;
+  --surface-2: #e9dfc9;
+  --text: #16110d;          /* near-black */
+  --muted: #6b6152;
+  --border: rgba(22, 17, 13, 0.12);
+  --primary: #e2622b;
+  --primary-hover: #c9501d;
+  --on-primary: #16110d;
+  --danger: #d33a3a;
+  --success: #1e9e50;
+  --shadow: rgba(22, 17, 13, 0.15);
+  --radius: 12px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
