@@ -100,6 +100,10 @@ export async function runTick() {
       schedule.active = true;
       schedulesChanged = true;
       rulesToAdd.push(blocker.buildScheduleRule(schedule, windowEndMs));
+      // Reload any open tabs on these domains so the block shows immediately.
+      for (const domain of schedule.domains) {
+        await blocker.reloadDomainTabs(domain).catch(() => {});
+      }
     } else if (!activeNow && schedule.active) {
       // active -> inactive: window ended, take the rule down.
       schedule.active = false;

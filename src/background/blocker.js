@@ -165,6 +165,31 @@ export async function removeRules(ids) {
 }
 
 /**
+ * Reload every open http(s) tab on a domain so a freshly-added DNR rule shows
+ * the block page immediately (otherwise an already-loaded SPA tab like x.com
+ * keeps rendering until the user manually reloads). All tab failures are
+ * swallowed so they never break blocking.
+ * @param {string} domain normalized domain whose tabs should reload
+ * @returns {Promise<void>}
+ */
+export async function reloadDomainTabs(domain) {
+  let tabs = [];
+  try {
+    tabs = await chrome.tabs.query({ url: `*://*.${domain}/*` });
+  } catch {
+    return; // tab query failure must not break blocking
+  }
+  for (const tab of tabs) {
+    if (!tab?.id || !/^https?:/.test(tab.url ?? "")) continue;
+    try {
+      await chrome.tabs.reload(tab.id);
+    } catch {
+      // Tab navigated/closed meanwhile — ignore.
+    }
+  }
+}
+
+/**
  * Add or remove the Shorts rule according to the current setting.
  * @param {boolean} enabled whether the Shorts blocker is on
  * @returns {Promise<void>}

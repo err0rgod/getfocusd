@@ -129,6 +129,9 @@ async function addBlock(msg) {
     await storage.saveBlocks(fresh);
     throw e;
   }
+  // Reload any already-open tabs on this domain so the block page shows
+  // immediately (an already-loaded SPA tab would otherwise stay visible).
+  await blocker.reloadDomainTabs(domain);
   return { block };
 }
 

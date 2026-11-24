@@ -63,6 +63,10 @@ async function activateWorkPhase(focus) {
   const session = focus.session;
   if (Array.isArray(focus.focusList) && focus.focusList.length) {
     await blocker.addRules([blocker.buildFocusRule(session, focus.focusList)]);
+    // Reload any already-open focus-list tabs so the block page shows now.
+    for (const domain of focus.focusList) {
+      await blocker.reloadDomainTabs(domain);
+    }
   }
   await armPhaseAlarm(session);
 }
